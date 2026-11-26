@@ -207,9 +207,9 @@ The browser cannot force fullscreen on an iPhone, so the light stick fills
 the window but does not hide the status bar. Installed to the home screen it
 covers everything anyway.
 
-### The address is https://roeybi.github.io/bts-lyrics/
+### The address is https://simplaidproject.github.io/bts-lyrics/
 The app lives on GitHub Pages and updates in place: push a new build to the
-`main` branch of `roeybi/bts-lyrics` and the same address serves it a minute
+`main` branch of `simplaidproject/bts-lyrics` and the same address serves it a minute
 later. The old MiniMax addresses (`…space.mcode.io`) still serve their own
 frozen v11 — do not use them. Check the build tag next to the logo (`v12`
 today).

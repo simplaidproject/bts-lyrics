@@ -128,11 +128,11 @@ If you only do five things, do these.
 
 | # | do this | expect |
 |---|---|---|
-| 8.1 | bump `VERSION` in `sw.js` and the `bts-build` tag in `index.html`, then push to `main` on `roeybi/bts-lyrics` | GitHub Pages rebuilds in a minute or two (Actions tab shows *pages build and deployment*) |
+| 8.1 | bump `VERSION` in `sw.js` and the `bts-build` tag in `index.html`, then push to `main` on `simplaidproject/bts-lyrics` | GitHub Pages rebuilds in a minute or two (Actions tab shows *pages build and deployment*) |
 | 8.2 | **close the app completely** and open it again | the new build arrives |
 | 8.3 | look at the tag next to the logo | it shows the new number (today: **v12**) |
 | 8.4 | if the tag has not changed | the update has not arrived — try step 8.2 once more |
-| 8.5 | open the old MiniMax address (`…space.mcode.io`) | it still serves the frozen v11 — only use **https://roeybi.github.io/bts-lyrics/** |
+| 8.5 | open the old MiniMax address (`…space.mcode.io`) | it still serves the frozen v11 — only use **https://simplaidproject.github.io/bts-lyrics/** |
 
 ## 9. Known results that are *not* bugs
 
