@@ -1,0 +1,967 @@
+/* ═══════════════════════════════════════════════════════════════
+   보라해 · Borahae — BTS lyric book
+   Aesthetic: ink-on-black gig poster. Horror-movie condensed type,
+   liner-note serif for words, typewriter mono for metadata.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root{
+  --ink:      #0a0712;
+  --ink-2:    #110b1e;
+  --ink-3:    #180f2b;
+  --paper:    #f5f0fa;
+  --paper-2:  #cabfdd;
+  --ash:      #8a8099;
+  --ash-2:    #524a63;
+  --violet:    #8b3ff0;
+  --violet-lo: #4b1d8f;
+  --lilac:     #c9a6ff;
+
+  --font-display: 'Big Shoulders Display', 'Oswald', 'Arial Narrow', sans-serif;
+  --font-serif:   'Spectral', 'Iowan Old Style', Georgia, var(--font-hangul);
+  --font-mono:    'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* Hangul and Japanese fall back to the device's own faces — no webfont
+     download, so the offline pack stays small and works on any phone. */
+  --font-hangul:  'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+                  'Nanum Gothic', 'Noto Sans CJK KR', 'Hiragino Sans',
+                  'Yu Gothic', sans-serif;
+  /* Hangul and Japanese fall back to the device's own faces — no webfont
+     download, so the offline pack stays small and works on any phone. */
+  --font-hangul:  'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+                  'Nanum Gothic', 'Noto Sans CJK KR', 'Hiragino Sans',
+                  'Yu Gothic', sans-serif;
+
+  --rail: 78px;
+  --pad: clamp(18px, 4vw, 46px);
+  --radius: 2px;
+
+  /* Safe-area insets. Routed through variables so the values can be
+     simulated (set --safe-top etc. on :root) in the layout tests.
+     viewport-fit=cover in index.html is what makes these non-zero on iOS. */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --tape: rgba(244,239,230,.14);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+
+/* Author display rules outrank the UA [hidden] rule — force it back. */
+[hidden]{ display:none !important; }
+
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--font-serif);
+  font-size:16px;
+  line-height:1.5;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+body.is-locked{ overflow:hidden; }
+
+::selection{ background:var(--violet); color:#fff; }
+
+/* ── atmosphere ─────────────────────────────────────────────── */
+.grain{
+  position:fixed; inset:-120px; z-index:9000; pointer-events:none;
+  opacity:.36; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  animation:grain 6s steps(6) infinite;
+}
+@keyframes grain{
+  0%{transform:translate(0,0)} 20%{transform:translate(-24px,14px)} 40%{transform:translate(18px,-22px)}
+  60%{transform:translate(-16px,-12px)} 80%{transform:translate(22px,18px)} 100%{transform:translate(0,0)}
+}
+.glow{
+  position:fixed; z-index:-1; inset:0; pointer-events:none;
+  background:
+    radial-gradient(90ch 60ch at 8% -12%, rgba(139,63,240,.20), transparent 62%),
+    radial-gradient(70ch 50ch at 104% 8%,  rgba(201,166,255,.075), transparent 60%),
+    radial-gradient(120ch 80ch at 50% 120%, rgba(125,17,32,.18), transparent 65%);
+}
+
+/* ── type helpers ───────────────────────────────────────────── */
+h1,h2,h3{ font-family:var(--font-display); font-weight:800; margin:0; letter-spacing:.012em; line-height:.92; }
+em{ font-style:italic; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+input{ font:inherit; color:inherit; }
+
+.mono{
+  font-family:var(--font-mono); font-size:.62rem; font-weight:700;
+  letter-spacing:.19em; text-transform:uppercase; color:var(--ash);
+}
+.rule{ height:1px; background:var(--tape); border:0; margin:0; }
+
+/* ── top bar ────────────────────────────────────────────────── */
+.topbar{
+  position:sticky; top:0; z-index:600;
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:calc(12px + var(--safe-top, 0px)) calc(var(--pad) + var(--safe-right, 0px))
+          11px calc(var(--pad) + var(--safe-left, 0px));
+  background:linear-gradient(180deg, rgba(8,8,11,.96), rgba(8,8,11,.82));
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid var(--tape);
+}
+.lockup{ display:flex; align-items:center; gap:12px; min-width:0; }
+.lockup__mark{ color:var(--violet); display:flex; flex:none; }
+.lockup__mark svg{ animation:spin 26s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.lockup__text{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+.lockup__band{
+  font-family:var(--font-display); font-weight:800; font-size:clamp(15px,2.6vw,21px);
+  letter-spacing:.055em; text-transform:uppercase; line-height:1;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.lockup__build{
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:.18em;
+  color:var(--ash-2); text-transform:uppercase; align-self:flex-start;
+  border:1px solid var(--tape); border-radius:3px; padding:1px 4px; margin-top:3px;
+}
+.lockup__sub{
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ash); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.topbar__right{ display:flex; align-items:center; gap:8px; flex:none; }
+
+.netbadge{
+  display:inline-flex; align-items:center; gap:7px;
+  padding:5px 11px 5px 9px; border:1px solid var(--tape); border-radius:100px;
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--paper-2); background:rgba(255,255,255,.02); white-space:nowrap;
+}
+.netbadge__dot{ width:6px; height:6px; border-radius:50%; background:var(--ash); flex:none; }
+.netbadge.is-offline .netbadge__dot{ background:var(--violet); box-shadow:0 0 0 3px rgba(139,63,240,.18); }
+.netbadge.is-ready .netbadge__dot{ background:var(--lilac); box-shadow:0 0 0 3px rgba(201,166,255,.15); }
+
+/* the badge icon: a tick when the whole book is on the device, a warning
+   when the pack is incomplete, a download arrow while it is still arriving */
+.netbadge__icon{ display:inline-flex; flex:none; }
+.netbadge__icon svg{ display:none; }
+.netbadge[data-state="ok"] .ico-ok{ display:block; color:var(--lilac); }
+.netbadge[data-state="warn"] .ico-warn{ display:block; color:var(--violet); }
+.netbadge[data-state="load"] .ico-load{ display:block; color:var(--ash); }
+.netbadge.is-incomplete .ico-warn{ animation:none; }
+
+/* the count of songs that can be opened with no network at all */
+.netbadge__count{
+  font-family:var(--font-mono); font-size:.72rem; letter-spacing:.06em;
+  color:var(--paper); font-variant-numeric:tabular-nums;
+}
+.netbadge[data-state="ok"] .netbadge__count{ color:var(--lilac); }
+.netbadge[data-state="warn"] .netbadge__count{ color:var(--violet); }
+
+.iconbtn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:38px; height:38px; border:1px solid var(--tape); border-radius:var(--radius);
+  color:var(--paper-2); transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.iconbtn:hover{ color:var(--paper); border-color:rgba(244,239,230,.34); background:rgba(255,255,255,.045); }
+.iconbtn--sm{ width:34px; height:34px; font-size:1.05rem; line-height:1; }
+.iconbtn.is-on{ color:var(--ink); background:var(--violet); border-color:var(--violet); }
+
+/* ── shell / nav ────────────────────────────────────────────── */
+.shell{ display:flex; min-height:calc(100vh - 62px); }
+
+.sidenav{
+  position:sticky; top:62px; align-self:flex-start;
+  width:var(--rail); flex:none; height:calc(100vh - 62px);
+  display:flex; flex-direction:column; gap:2px;
+  padding:22px 0 30px; border-right:1px solid var(--tape);
+}
+.navitem{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:13px 6px; color:var(--ash); transition:color .2s var(--ease);
+}
+.navitem span{ font-family:var(--font-mono); font-size:.5rem; letter-spacing:.13em; text-transform:uppercase; }
+.navitem:hover{ color:var(--paper-2); }
+.navitem.is-active{ color:var(--paper); }
+.navitem.is-active::before{
+  content:""; position:absolute; left:0; top:10px; bottom:10px; width:2px; background:var(--violet);
+}
+.navitem.is-active svg{ filter:drop-shadow(0 0 8px rgba(139,63,240,.45)); }
+.navitem__count{
+  position:absolute; top:7px; right:12px; min-width:17px; height:17px; padding:0 4px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--violet); color:#fff; border-radius:100px;
+  font-family:var(--font-mono); font-size:.53rem; font-style:normal; font-weight:700;
+}
+
+.main{ flex:1; min-width:0; padding:0 var(--pad) 90px; }
+
+/* ── signature bar ──────────────────────────────────────────── */
+.sigbar{
+  max-width:1180px; margin:0 auto; width:100%;
+  display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+  padding:24px 0 6px; margin-top:44px;
+  border-top:1px solid var(--tape);
+  font-family:var(--font-mono); font-size:.58rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ash-2);
+}
+.sigbar__mark{ color:var(--lilac); font-size:.8rem; letter-spacing:0; }
+.sigbar__who{ color:var(--ash); }
+.sigbar__who strong{
+  color:var(--paper); font-weight:600; letter-spacing:.22em;
+}
+.sigbar__rule{
+  width:44px; height:1px; background:var(--tape); display:inline-block;
+}
+.sigbar__date{ color:var(--ash-2); }
+
+.signature{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:18px 20px; margin:18px 0 26px;
+  border:1px solid var(--tape); border-left:2px solid var(--lilac);
+  background:rgba(201,166,255,.045);
+  font-family:var(--font-mono); font-size:.66rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ash);
+}
+.signature__mark{ color:var(--lilac); font-size:.9rem; letter-spacing:0; }
+.signature__line{ color:var(--ash); }
+.signature__line strong{ color:var(--paper); font-weight:600; letter-spacing:.24em; }
+.signature__rule{ width:44px; height:1px; background:var(--tape); display:inline-block; }
+.signature__date{ color:var(--ash-2); }
+.view{ max-width:1180px; margin:0 auto; animation:rise .42s var(--ease) both; }
+@keyframes rise{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:none;} }
+
+/* ── mobile tab bar ─────────────────────────────────────────── */
+.tabbar{ display:none; }
+
+/* ── hero ───────────────────────────────────────────────────── */
+.hero{ padding:clamp(34px,7vw,78px) 0 clamp(26px,4vw,42px); }
+.hero__rule{
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding-bottom:10px; margin-bottom:clamp(18px,3vw,30px);
+  border-bottom:1px solid var(--tape);
+  font-family:var(--font-mono); font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ash);
+}
+.hero__title{
+  font-size:clamp(52px,12.5vw,148px); line-height:.84; letter-spacing:-.006em;
+  text-transform:uppercase; margin-bottom:clamp(16px,2.6vw,26px);
+}
+.hero__title em{
+  color:transparent; -webkit-text-stroke:1.6px var(--violet);
+  font-style:normal; font-weight:800;
+}
+.hero__blurb{
+  max-width:52ch; font-size:clamp(.95rem,1.6vw,1.08rem); color:var(--paper-2);
+  line-height:1.62; margin:0 0 clamp(22px,3.2vw,32px);
+}
+
+/* ── search: a torn concert ticket ──────────────────────────── */
+.searchbar{
+  position:relative; display:flex; align-items:center; gap:12px;
+  padding:0 16px 0 46px; height:56px; max-width:640px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+  border:1px solid rgba(244,239,230,.19); border-radius:var(--radius);
+  box-shadow:0 18px 44px -28px rgba(0,0,0,.9);
+  transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.searchbar:focus-within{
+  border-color:var(--violet);
+  box-shadow:0 0 0 3px rgba(139,63,240,.14), 0 18px 44px -28px rgba(0,0,0,.9);
+}
+.searchbar__icon{ position:absolute; left:16px; color:var(--ash); pointer-events:none; }
+.searchbar input{
+  flex:1; min-width:0; background:none; border:0; outline:none;
+  font-family:var(--font-serif); font-size:1rem; color:var(--paper);
+}
+.searchbar input::placeholder{ color:var(--ash-2); font-style:italic; }
+.searchbar input::-webkit-search-cancel-button{ display:none; }
+.searchbar__clear{ color:var(--ash); font-size:1.5rem; line-height:1; padding:0 4px; }
+.searchbar__clear:hover{ color:var(--paper); }
+/* perforation */
+.searchbar__perf{
+  position:absolute; top:6px; bottom:6px; width:2px;
+  background-image:radial-gradient(circle at 1px 1px, var(--ink) 1px, transparent 1.4px);
+  background-size:2px 9px; opacity:.85;
+}
+.searchbar__perf--l{ left:-9px; } .searchbar__perf--r{ right:-9px; }
+
+.quickchips{ display:flex; gap:7px; flex-wrap:wrap; margin-top:14px; }
+.chip{
+  padding:5px 12px; border:1px solid var(--tape); border-radius:100px;
+  font-family:var(--font-mono); font-size:.58rem; letter-spacing:.11em; text-transform:uppercase; color:var(--ash);
+  transition:color .18s var(--ease), border-color .18s var(--ease);
+}
+.chip:hover{ color:var(--paper); border-color:rgba(139,63,240,.55); }
+.chip__count{ color:var(--paper); font-variant-numeric:tabular-nums; margin-left:2px; }
+
+/* the "offline" chip — how many songs are on this device */
+.chip--offline{ color:var(--lilac); border-color:rgba(201,166,255,.38); }
+.chip--offline:hover,.chip--offline.is-on{ color:var(--ink); background:var(--lilac); border-color:var(--lilac); }
+.chip--offline:hover .chip__count,.chip--offline.is-on .chip__count{ color:var(--ink); }
+.offlinedot{
+  display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--lilac); margin-right:6px; vertical-align:middle;
+}
+.chip--offline.is-on .offlinedot{ background:var(--ink); }
+
+/* ── section blocks ─────────────────────────────────────────── */
+.block{ margin:clamp(34px,6vw,62px) 0 0; }
+.block__head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+  padding-bottom:9px; margin-bottom:18px; border-bottom:1px solid var(--tape);
+}
+.block__head h2{ font-size:clamp(22px,3.4vw,32px); text-transform:uppercase; letter-spacing:.03em; }
+.block__meta{ font-family:var(--font-mono); font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ash); }
+
+/* ── release cards (mini posters) ───────────────────────────── */
+.releasegrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(236px,1fr)); gap:12px; }
+.rcard{
+  position:relative; overflow:hidden; text-align:left;
+  padding:16px 16px 14px; min-height:152px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  background:linear-gradient(165deg, var(--ink-3), var(--ink-2) 58%, #0a0a0e);
+  border:1px solid var(--tape); border-radius:var(--radius);
+  transition:transform .26s var(--ease), border-color .26s var(--ease), box-shadow .26s var(--ease);
+  animation:rise .5s var(--ease) both;
+}
+.rcard::before{
+  content:""; position:absolute; inset:0; opacity:.5; z-index:1;
+  background:
+    repeating-linear-gradient(90deg, rgba(244,239,230,.035) 0 1px, transparent 1px 26px),
+    radial-gradient(120% 90% at 88% -14%, rgba(139,63,240,.34), transparent 62%);
+  transition:opacity .3s var(--ease);
+}
+.rcard:hover{ transform:translateY(-3px); border-color:rgba(139,63,240,.6); box-shadow:0 26px 50px -30px rgba(139,63,240,.4); }
+.rcard:hover::before{ opacity:.85; }
+/* The album art: a square cover that fades into the card */
+.rcard__artwrap{
+  position:absolute; inset:0 0 auto 0; height:56%;
+  overflow:hidden; border-radius:calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+}
+.rcard__art{
+  width:100%; height:100%; object-fit:cover; display:block;
+  opacity:.92; transition:transform .5s var(--ease), opacity .3s var(--ease);
+}
+/* the art fades into the card so the title always reads over it */
+.rcard__artwrap::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(to bottom, rgba(8,8,11,0) 26%, rgba(9,9,13,.62) 62%, rgba(10,10,14,.95) 100%);
+}
+.rcard:hover .rcard__art{ transform:scale(1.05); opacity:1; }
+.rcard::after{ z-index:0; }
+.rcard__year{
+  position:relative; font-family:var(--font-mono); font-size:.56rem; letter-spacing:.2em; color:var(--lilac);
+}
+.rcard__name{
+  position:relative; margin:6px 0 10px;
+  font-family:var(--font-display); font-weight:800; font-size:clamp(21px,2.9vw,27px);
+  line-height:.94; text-transform:uppercase;
+}
+.rcard__foot{ position:relative; display:flex; justify-content:space-between; gap:10px; }
+.rcard__foot span{ font-family:var(--font-mono); font-size:.53rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ash); }
+/* registration corner ticks */
+.rcard::after{
+  content:""; position:absolute; inset:6px; pointer-events:none;
+  border:1px solid rgba(244,239,230,.07);
+  clip-path:polygon(0 0,14px 0,14px 1px,1px 1px,1px 14px,0 14px,0 0, 100% 0,100% 14px,calc(100% - 1px) 14px,calc(100% - 1px) 1px,calc(100% - 14px) 1px,calc(100% - 14px) 0,100% 0, 100% 100%,calc(100% - 14px) 100%,calc(100% - 14px) calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),calc(100% - 1px) calc(100% - 14px),100% calc(100% - 14px),100% 100%, 0 100%,0 calc(100% - 14px),1px calc(100% - 14px),1px calc(100% - 1px),14px calc(100% - 1px),14px 100%,0 100%);
+}
+
+/* ── song rows ──────────────────────────────────────────────── */
+.songlist{ display:flex; flex-direction:column; }
+.songrow{
+  display:grid; grid-template-columns:38px minmax(0,1fr) auto auto; align-items:center; gap:14px;
+  padding:11px 6px; border-bottom:1px solid rgba(244,239,230,.075);
+  transition:background .16s var(--ease), padding-left .2s var(--ease);
+  animation:rise .42s var(--ease) both;
+}
+.songrow:hover{ background:rgba(244,239,230,.032); padding-left:13px; }
+.songrow__n{ font-family:var(--font-mono); font-size:.62rem; color:var(--ash-2); text-align:right; }
+.songrow:hover .songrow__n{ color:var(--violet); }
+.songrow__main{ min-width:0; }
+.songrow__title{
+  font-family:var(--font-display); font-weight:700; font-size:1.06rem; letter-spacing:.012em;
+  text-transform:uppercase; line-height:1.16; display:block;
+}
+.songrow:hover .songrow__title{ color:#fff; }
+.songrow__meta{
+  font-family:var(--font-mono); font-size:.54rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ash);
+  margin-top:3px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.songrow__star{
+  color:var(--ash-2); font-size:1.05rem; line-height:1; padding:6px; transition:color .16s var(--ease), transform .16s var(--ease);
+}
+.songrow__star:hover{ color:var(--lilac); transform:scale(1.15); }
+.songrow__star.is-on{ color:var(--lilac); }
+
+/* the tick on a row that can be opened with no network at all */
+.songrow__off{
+  flex:none; width:17px; height:17px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid rgba(201,166,255,.45); color:var(--lilac);
+  font-size:.56rem; line-height:1; margin-right:2px;
+}
+.songrow__off svg{ width:10px; height:10px; }
+.songrow.is-starred .songrow__title{ color:var(--lilac); }
+
+.lettergroup__head{
+  margin:26px 0 4px; padding-bottom:7px; border-bottom:1px solid var(--tape);
+  font-family:var(--font-display); font-weight:800; font-size:1.6rem; color:var(--violet);
+}
+
+/* ── search results ─────────────────────────────────────────── */
+.searchresults{ margin:6px 0 10px; }
+.sresult{
+  padding:14px 0 12px; border-bottom:1px solid rgba(244,239,230,.075);
+}
+.sresult__head{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; cursor:pointer; }
+.sresult__head:hover .sresult__title{ color:var(--violet); }
+.sresult__title{ font-family:var(--font-display); font-weight:700; font-size:1.24rem; text-transform:uppercase; }
+.sresult__title:hover{ color:var(--violet); }
+.sresult__meta{ font-family:var(--font-mono); font-size:.54rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ash); }
+.sresult__snips{ margin:8px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; }
+.sresult__snip{
+  font-size:.92rem; color:var(--paper-2); line-height:1.5; padding-left:13px; border-left:2px solid var(--violet-lo);
+  font-style:italic;
+}
+mark{ background:rgba(139,63,240,.32); color:#fff; padding:0 2px; border-radius:1px; font-style:normal; }
+.srhead{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  padding-bottom:9px; border-bottom:1px solid var(--tape); margin-bottom:4px;
+}
+.srhead h2{ font-size:clamp(20px,3vw,28px); text-transform:uppercase; }
+
+/* ── page heads ─────────────────────────────────────────────── */
+.pagehead{ padding:clamp(30px,6vw,60px) 0 20px; border-bottom:1px solid var(--tape); margin-bottom:22px; }
+.pagehead__title{
+  font-size:clamp(38px,7.5vw,82px); text-transform:uppercase;
+  line-height:1.08; padding-top:.08em;   /* keep the glyph box off the back link */
+}
+.pagehead__sub{ margin:10px 0 0; color:var(--ash); font-style:italic; max-width:56ch; }
+
+/* ── alpha rail ─────────────────────────────────────────────── */
+.alpha{
+  position:sticky; top:calc(62px + var(--safe-top, 0px)); z-index:400;
+  display:flex; flex-wrap:wrap; gap:3px; padding:11px 0;
+  margin-bottom:8px; background:var(--ink); border-bottom:1px solid var(--tape);
+}
+.alpha button{
+  min-width:26px; height:26px; padding:0 5px;
+  font-family:var(--font-mono); font-size:.62rem; font-weight:700; color:var(--ash);
+  border:1px solid transparent; border-radius:var(--radius); transition:all .15s var(--ease);
+}
+.alpha button:hover{ color:var(--ink); background:var(--violet); }
+.alpha button:disabled{ opacity:.2; cursor:default; }
+
+/* ── song view ──────────────────────────────────────────────── */
+.view--song{ max-width:900px; }
+.songhead{ padding:clamp(26px,5vw,50px) 0 0; }
+.songhead__back{
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ash);
+  display:inline-flex; align-items:center; gap:7px; padding:6px 0;
+}
+.songhead__back:hover{ color:var(--paper); }
+/* ── BTS: Korean title, romanization and translation ─────── */
+.songhead__ko{
+  margin-top:6px; font-family:var(--font-hangul); font-size:.95rem;
+  color:var(--paper-2); letter-spacing:.02em;
+}
+.songhead__koroman{
+  font-family:var(--font-mono); font-size:.66rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ash); margin-left:6px;
+}
+/* the line under the big text */
+.lyric__sub{
+  display:block; margin-top:4px; line-height:1.4; color:var(--ash);
+}
+.lyric__sub--roman{
+  font-family:var(--font-mono); font-size:.56em; letter-spacing:.03em;
+}
+.lyric__sub--ko{
+  font-family:var(--font-hangul); font-size:.62em; letter-spacing:.01em;
+  opacity:.85;
+}
+/* in concert mode the type is huge, so the reading aids stay small */
+.concert .cline__ko{
+  display:block; margin-top:8px; font-family:var(--font-hangul);
+  font-size:.26em; line-height:1.4; color:var(--ash); opacity:.9;
+}
+.concert .lyric__en{ font-size:.26em; margin-top:4px; opacity:.9; }
+.lyric__en{
+  display:block; margin-top:2px; font-family:var(--font-serif);
+  font-size:.78em; line-height:1.4; color:var(--paper-2); font-style:italic;
+}
+.tag--lang{ color:var(--lilac); border-color:var(--violet); }
+.btn--lang{ min-width:56px; }
+/* the writer credits under the song title */
+.songhead__credit{
+  margin-top:8px; font-size:.72rem; line-height:1.5; color:var(--paper-2);
+  max-width:52ch;
+}
+.songhead__creditlabel{
+  font-family:var(--font-mono); font-size:.56rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--ash); margin-right:6px;
+}
+.writelink{
+  color:var(--lilac); text-decoration:none; border-bottom:1px solid rgba(201,166,255,.35);
+}
+.writelink:hover{ border-bottom-color:var(--lilac); }
+.writesep{ color:var(--ash-2); }
+
+.songhead__title{
+  font-size:clamp(38px,9vw,86px); text-transform:uppercase; line-height:1.02;
+  margin:18px 0 10px; padding-top:.06em;   /* keep the glyph box off the back link */
+}
+.songhead__meta{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px;
+  padding:12px 0 16px; border-bottom:1px solid var(--tape);
+}
+.tag{
+  padding:3px 9px; border:1px solid var(--tape); border-radius:100px;
+  font-family:var(--font-mono); font-size:.53rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ash);
+}
+.tag--blood{ color:var(--violet); border-color:rgba(139,63,240,.45); }
+.tag--gold{ color:var(--lilac); border-color:rgba(201,166,255,.4); }
+.songhead__actions{ display:flex; flex-wrap:wrap; gap:8px; padding:16px 0 4px; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 16px; border:1px solid var(--tape); border-radius:var(--radius);
+  font-family:var(--font-mono); font-size:.57rem; letter-spacing:.17em; text-transform:uppercase; color:var(--paper-2);
+  transition:all .18s var(--ease);
+}
+.btn:hover{ color:var(--paper); border-color:rgba(244,239,230,.34); background:rgba(255,255,255,.05); }
+.btn--primary{ background:var(--violet); border-color:var(--violet); color:#fff; font-weight:700; }
+.btn--primary:hover{ background:#ee2a42; border-color:#ee2a42; color:#fff; }
+.btn--gold{ color:var(--lilac); border-color:rgba(201,166,255,.42); }
+.btn--lilac:hover{ color:var(--ink); background:var(--lilac); border-color:var(--lilac); }
+.btn.is-on{ color:var(--ink); background:var(--lilac); border-color:var(--lilac); }
+
+/* ── lyric column ───────────────────────────────────────────── */
+.lyric{
+  padding:clamp(24px,4vw,40px) 0 40px;
+  font-size:calc(1.1rem * var(--lyric-scale,1));
+  line-height:1.72; color:var(--paper-2);
+}
+.lyric p{ margin:0 0 .28em; transition:color .22s var(--ease); }
+.lyric p.is-blank{ height:.55em; }
+.lyric p.is-cur{ color:#fff; }
+.lyric p.is-hit{ color:var(--lilac); }
+.lyric .lyric__none{
+  color:var(--ash); font-style:italic; padding:30px 0; border:1px dashed var(--tape); text-align:center;
+}
+
+/* ── setlist ────────────────────────────────────────────────── */
+.setlist{ display:flex; flex-direction:column; }
+.setrow{
+  display:grid; grid-template-columns:34px minmax(0,1fr) auto; align-items:center; gap:12px;
+  padding:12px 4px; border-bottom:1px solid rgba(244,239,230,.075);
+}
+.setrow__n{ font-family:var(--font-display); font-weight:800; font-size:1.35rem; color:var(--ash-2); text-align:center; }
+.setrow__title{ font-family:var(--font-display); font-weight:700; font-size:1.04rem; text-transform:uppercase; }
+.setrow__meta{ font-family:var(--font-mono); font-size:.53rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ash); margin-top:2px; display:block; }
+.setrow__ops{ display:flex; gap:4px; }
+.setrow__ops .iconbtn{ width:31px; height:31px; font-size:.9rem; }
+.empty{
+  padding:44px 20px; text-align:center; border:1px dashed var(--tape); color:var(--ash);
+  font-style:italic; border-radius:var(--radius);
+}
+.empty strong{ display:block; font-family:var(--font-display); font-size:1.5rem; font-style:normal;
+  text-transform:uppercase; color:var(--paper-2); margin-bottom:7px; }
+
+/* ── prose / about ──────────────────────────────────────────── */
+.prose{ max-width:70ch; padding-bottom:60px; }
+.prose h3{
+  font-size:1.42rem; text-transform:uppercase; margin:34px 0 10px; color:var(--paper);
+}
+.prose p{ color:var(--paper-2); line-height:1.68; margin:0 0 13px; }
+.prose ul{ color:var(--paper-2); line-height:1.68; padding-left:20px; margin:0 0 13px; }
+.prose li{ margin-bottom:5px; }
+.prose code{
+  font-family:var(--font-mono); font-size:.78em; background:rgba(244,239,230,.07);
+  padding:1px 5px; border-radius:2px;
+}
+.prose a{ color:var(--violet); border-bottom:1px solid rgba(139,63,240,.42); }
+.prose a:hover{ color:#f04a5e; }
+
+/* ── concert mode ───────────────────────────────────────────── */
+.concert{
+  position:fixed; inset:0; z-index:1000; display:flex; flex-direction:column;
+  background:#000;
+  animation:conin .14s var(--ease) both;
+}
+@keyframes conin{ from{ opacity:0; } to{ opacity:1; } }
+.concert__progress{ position:absolute; top:var(--safe-top, 0px); left:0; right:0; height:3px; background:rgba(255,255,255,.1); z-index:7; }
+.concert__progress i{ display:block; height:100%; width:0; background:var(--violet); transition:width .25s var(--ease); }
+.concert__bar{
+  display:flex; align-items:center; gap:13px;
+  padding:calc(12px + var(--safe-top, 0px)) calc(14px + var(--safe-right, 0px))
+          12px calc(14px + var(--safe-left, 0px));
+  border-bottom:1px solid rgba(255,255,255,.1); z-index:6;
+  /* opaque enough to stay readable when the white brightness pane is up */
+  background:rgba(8,8,11,.94);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.concert__meta{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.concert__title{
+  font-family:var(--font-display); font-weight:800; font-size:1.05rem; text-transform:uppercase;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.concert__sub{
+  font-family:var(--font-mono); font-size:.52rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ash);
+  /* one line only: on a phone the meta column is narrow and a wrapping
+     subtitle pushed the header to 100px tall */
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.concert__tools{ display:flex; gap:6px; }
+.concert__stage{ position:relative; flex:1; overflow:hidden; }
+.concert__scroll{
+  height:100%; overflow-y:auto; scrollbar-width:none;
+  padding:clamp(20px,4vh,48px) clamp(18px,6vw,64px) 40vh;
+  font-size:calc(clamp(1.35rem, 1.35vw + 1.05rem, 2.35rem) * var(--lyric-scale,1));
+  line-height:1.55; overscroll-behavior:contain; -webkit-user-select:none; user-select:none;
+}
+.concert__scroll::-webkit-scrollbar{ display:none; }
+.concert__scroll p{
+  margin:0 0 .22em; color:rgba(244,239,230,.22);
+  /* a single very long word can never push the column wider than the box */
+  overflow-wrap:break-word;
+  transition:color .3s var(--ease), text-shadow .3s var(--ease);
+}
+.concert__scroll p.is-blank{ height:.5em; }
+.concert__scroll p.is-past{ color:rgba(244,239,230,.10); }
+.concert__scroll p.is-next{ color:rgba(244,239,230,.44); }
+/* The active line is enlarged with font-size, not with a transform:
+   the browser re-wraps the grown text inside the column, so the line can
+   never overflow the container (a transform scales the already-wrapped
+   line and pushed the last word past the right edge). */
+.concert__scroll p.is-cur{
+  color:#fff; font-weight:600; font-size:1.11em;
+  text-shadow:0 0 38px rgba(139,63,240,.55), 0 0 10px rgba(139,63,240,.35);
+}
+.tapzone{
+  position:absolute; top:0; bottom:0; width:44%; z-index:2; background:none;
+}
+.tapzone--prev{ left:0; } .tapzone--next{ right:0; width:56%; }
+.tapzone:active{ background:rgba(255,255,255,.028); }
+.concert__foot{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:11px calc(14px + var(--safe-right, 0px))
+          max(11px, var(--safe-bottom, 0px)) calc(14px + var(--safe-left, 0px));
+  border-top:1px solid rgba(255,255,255,.1); z-index:6;
+  background:rgba(8,8,11,.94);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.concert__foot span{ font-family:var(--font-mono); font-size:.56rem; letter-spacing:.15em; text-transform:uppercase; color:var(--ash); }
+.concert__progressctl{ display:flex; gap:6px; }
+/* an instrumental has no lines: the counter reads "0 / 0" instead of "1 / 0" */
+#concertPos.is-instrumental,
+.concert__foot.is-instrumental #concertPos{ color:var(--lilac); letter-spacing:.18em; }
+/* The brightness pane is a full-bleed white sheet. It sits above the tap
+   zones (so a tap meant for "next line" is consumed instead of leaking
+   through) and below the concert header/footer (so the exit button and the
+   sun stay reachable — the pane must never trap the user). */
+.concert__bright{
+  position:absolute; inset:0; background:#fff8ef; opacity:.93; z-index:5;
+  pointer-events:auto; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ── the light stick ────────────────────────────────────────────
+   Purple, like the bang! stick in every hand at a BTS concert, and
+   it flashes on the beat. The flash is written straight into --pulse
+   by the sync engine when there is a beat to follow; without one the
+   overlay breathes on its own. */
+.sticklight{
+  position:fixed; inset:0; z-index:2147483646;
+  background:#4a1a8c;
+  -webkit-user-select:none; user-select:none;
+  overscroll-behavior:contain;
+}
+.sticklight__glow{
+  position:absolute; inset:-18%;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(233,213,255,.95) 0%, rgba(139,63,240,.85) 22%, rgba(74,26,140,.9) 46%, rgba(30,10,60,.96) 72%);
+  transform:scale(calc(1 + var(--pulse, 0) * .16));
+  opacity:calc(.72 + var(--pulse, 0) * .28);
+  transition:transform .09s linear, opacity .09s linear;
+}
+.sticklight.is-auto .sticklight__glow{
+  animation:stickbreathe 2.4s ease-in-out infinite;
+}
+@keyframes stickbreathe{
+  0%,100%{ transform:scale(1);    opacity:.72; }
+  50%    { transform:scale(1.05); opacity:.94; }
+}
+.sticklight__bar{
+  position:absolute; left:50%; bottom:max(22px, var(--safe-bottom, 0px));
+  transform:translateX(-50%);
+  display:flex; align-items:center; gap:14px; max-width:92vw;
+  padding:9px 14px; border-radius:100px;
+  background:rgba(12,6,26,.72); border:1px solid rgba(233,213,255,.28);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.sticklight__label{
+  font-family:var(--font-mono); font-size:.58rem; letter-spacing:.16em;
+  text-transform:uppercase; color:#f0e6ff; white-space:nowrap;
+  max-width:34vw; overflow:hidden; text-overflow:ellipsis;
+}
+.sticklight__exit{
+  padding:7px 12px; border-radius:100px; white-space:nowrap;
+  border:1px solid rgba(233,213,255,.34); background:rgba(233,213,255,.1);
+  color:#f0e6ff; font-family:var(--font-mono); font-size:.54rem;
+  letter-spacing:.12em; text-transform:uppercase; cursor:pointer;
+}
+.sticklight__mode{
+  padding:7px 11px; border-radius:100px; white-space:nowrap;
+  border:1px solid rgba(233,213,255,.4); background:rgba(233,213,255,.16);
+  color:#fff; font-family:var(--font-mono); font-size:.54rem;
+  letter-spacing:.14em; cursor:pointer;
+}
+.sticklight__mic{
+  padding:7px 12px; border-radius:100px; white-space:nowrap;
+  font-size:.8rem; line-height:1;
+  border:1px solid rgba(233,213,255,.5); background:rgba(233,213,255,.28);
+  color:#fff; font-family:var(--font-mono); font-size:.54rem;
+  letter-spacing:.12em; cursor:pointer;
+}
+.sticklight__mic:hover{ background:rgba(233,213,255,.4); }
+/* ── the light stick ────────────────────────────────────────────
+   Purple, like the bang! stick in every hand at a BTS concert, and
+   it flashes on the beat. The flash is written straight into --pulse
+   by the sync engine when there is a beat to follow; without one the
+   overlay breathes on its own. */
+/* ── seek bar + sync mode chip ─────────────────────────────── */
+.concert__seek{
+  display:flex; align-items:center; gap:11px;
+  padding:9px calc(14px + var(--safe-right, 0px)) 9px calc(14px + var(--safe-left, 0px));
+  border-top:1px solid rgba(255,255,255,.1); background:rgba(8,8,11,.94); z-index:6;
+}
+.concert__seeklabel{
+  font-family:var(--font-mono); font-size:.54rem; letter-spacing:.12em; color:var(--ash);
+  min-width:38px; font-variant-numeric:tabular-nums;
+}
+.concert__seeklabel:last-of-type{ text-align:right; }
+.concert__seek input[type=range]{
+  flex:1; min-width:0; height:22px; background:none; -webkit-appearance:none; appearance:none; cursor:pointer;
+}
+.concert__seek input[type=range]::-webkit-slider-runnable-track{
+  height:3px; background:rgba(255,255,255,.16); border-radius:2px;
+}
+.concert__seek input[type=range]::-moz-range-track{
+  height:3px; background:rgba(255,255,255,.16); border-radius:2px;
+}
+.concert__seek input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:13px; height:13px; margin-top:-5px;
+  border-radius:50%; background:var(--violet); box-shadow:0 0 10px rgba(139,63,240,.7);
+}
+.concert__seek input[type=range]::-moz-range-thumb{
+  width:13px; height:13px; border:0; border-radius:50%; background:var(--violet);
+}
+.concert__mode{
+  padding:3px 9px; border-radius:100px; border:1px solid var(--tape);
+  font-family:var(--font-mono); font-size:.5rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ash); white-space:nowrap;
+}
+.concert__mode.is-sync{ color:var(--lilac); border-color:rgba(201,166,255,.45); }
+.concert__mode.is-locked{ color:#4ade80; border-color:rgba(74,222,128,.45); }
+
+/* word-level karaoke highlight inside the current line */
+.concert__scroll p.is-cur .w{ color:rgba(244,239,230,.5); transition:color .12s linear; }
+.concert__scroll p.is-cur .w.on{ color:#fff; }
+
+/* ── tap-to-sync editor ─────────────────────────────────────── */
+.editor{
+  position:fixed; inset:0; z-index:1800; display:flex; align-items:center; justify-content:center;
+  padding:20px; background:rgba(4,4,7,.97); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  animation:conin .22s var(--ease) both;
+}
+.lyric__note{
+  font-family:var(--font-mono); font-size:.52rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ash-2); opacity:.7;
+  margin:0 0 18px; padding-left:11px; border-left:2px solid rgba(201,166,255,.35);
+  line-height:1.7;
+}
+
+/* the brightness pane's dismiss button — centred in the visible pane so
+   the concert header and footer (both above it) can never cover it */
+#concertBrightClose{
+  position:absolute !important; top:50% !important; right:auto !important;
+  left:50% !important; transform:translate(-50%,-50%);
+  width:52px !important; height:52px !important;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(24,18,16,.62) !important; color:#fff !important;
+  border:1px solid rgba(255,255,255,.5) !important; border-radius:50% !important;
+  font:600 1.1rem/1 var(--font-mono,monospace) !important;
+  backdrop-filter:blur(4px);
+}
+
+.editor__panel{
+  width:min(560px,100%); max-height:92vh; overflow:auto;
+  padding:22px; border:1px solid var(--tape); border-radius:var(--radius);
+  background:#110b1e;
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.95);
+}
+.editor__head{ display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+.editor__titles{ display:flex; flex-direction:column; min-width:0; }
+.editor__song{
+  font-family:var(--font-display); font-weight:800; font-size:1.25rem; text-transform:uppercase;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.editor__sub{ font-family:var(--font-mono); font-size:.53rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ash); }
+.editor__now{
+  font-family:var(--font-display); font-weight:700; font-size:clamp(1.5rem,5vw,2.3rem);
+  line-height:1.05; text-transform:uppercase; min-height:2.4em;
+  padding:14px 0; border-top:1px solid var(--tape); border-bottom:1px solid var(--tape);
+  display:flex; align-items:center;
+}
+.editor__now .dim{ color:var(--ash-2); }
+.editor__help{ color:var(--ash); font-size:.9rem; line-height:1.55; margin:14px 0 18px; }
+.editor__help strong{ color:var(--paper); }
+.editor__count{
+  font-family:var(--font-mono); font-size:.53rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--lilac); margin:-8px 0 16px;
+}
+.editor__tap{
+  width:100%; height:104px; margin-bottom:18px;
+  border:2px solid var(--violet); border-radius:var(--radius);
+  background:linear-gradient(180deg, rgba(139,63,240,.22), rgba(139,63,240,.08));
+  color:#fff; font-family:var(--font-display); font-weight:800; font-size:2rem; letter-spacing:.08em;
+  text-transform:uppercase; transition:background .14s var(--ease), transform .08s var(--ease);
+}
+.editor__tap:active{ transform:scale(.985); background:rgba(139,63,240,.4); }
+.editor__tap.is-live{ border-color:var(--lilac); background:rgba(201,166,255,.16); }
+.editor__actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+/* the release page: the cover sits above the title */
+.relhero{
+  position:relative; z-index:1; margin:6px 0 16px;
+  width:min(360px, 78vw); aspect-ratio:1/1;
+  border:1px solid var(--tape); border-radius:var(--radius); overflow:hidden;
+  box-shadow:0 30px 70px -40px rgba(0,0,0,.95), 0 0 0 1px rgba(139,63,240,.12);
+}
+.relhero__art{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* ── toast ──────────────────────────────────────────────────── */
+.toast{
+  position:fixed; left:50%; bottom:26px; transform:translateX(-50%);
+  z-index:2000; padding:11px 18px; max-width:88vw;
+  background:var(--paper); color:var(--ink); border-radius:var(--radius);
+  font-family:var(--font-mono); font-size:.58rem; letter-spacing:.14em; text-transform:uppercase;
+  box-shadow:0 20px 44px -18px rgba(0,0,0,.85); animation:toastin .28s var(--ease) both;
+}
+@keyframes toastin{ from{ opacity:0; transform:translate(-50%,12px);} to{ opacity:1; transform:translate(-50%,0);} }
+/* A toast is a message, never a target: taps go straight through it. */
+.toast{ pointer-events:none; }
+/* On a phone the bottom edge belongs to the tab bar and the browser's own
+   toolbar. Show the toast under the top bar instead. */
+@media (max-width:899px){
+  .toast{
+    bottom:auto; top:calc(70px + var(--safe-top, 0px)); z-index:10000;
+    animation-name:toastdown;
+  }
+  /* in concert mode, clear the tool bar too */
+  .concert:not([hidden]) ~ .toast{ top:calc(132px + var(--safe-top, 0px)); }
+}
+@keyframes toastdown{ from{ opacity:0; transform:translate(-50%,-12px);} to{ opacity:1; transform:translate(-50%,0);} }
+
+/* ── responsive ─────────────────────────────────────────────── */
+@media (max-width:899px){
+  .sidenav{ display:none; }
+  .shell{ min-height:calc(100vh - 58px); }
+  .main{ padding-bottom:96px; }
+  .topbar{ padding:calc(10px + var(--safe-top, 0px)) calc(16px + var(--safe-right, 0px)) 10px calc(16px + var(--safe-left, 0px)); }
+  /* on a phone the words go, but the build tag stays — it is the only
+     way to tell a fresh deployment from a stale one */
+  .lockup__sub{ display:none; }
+  .iconbtn--only-mobile{ display:inline-flex; }
+  /* on a phone the words go, but the icon and the song count stay:
+     "✓ 92" says more than a bare dot ever could */
+  #netLabel{ display:none; }
+  .netbadge{ padding:5px 9px; gap:5px; }
+  .tabbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:700;
+    display:flex; justify-content:space-around; align-items:stretch;
+    padding:4px 6px calc(4px + var(--safe-bottom, 0px));
+    background:linear-gradient(180deg, rgba(14,14,20,.96), rgba(8,8,11,.99));
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--tape);
+  }
+  .tabitem{
+    flex:1; text-align:center; padding:9px 2px; color:var(--ash);
+    font-family:var(--font-mono); font-size:.5rem; letter-spacing:.13em; text-transform:uppercase;
+  }
+  .tabitem.is-active{ color:var(--violet); }
+  .alpha{ top:calc(58px + var(--safe-top, 0px)); }
+  .hero__title{ font-size:clamp(48px,15vw,92px); }
+  .concert__scroll{ font-size:calc(clamp(1.2rem, 5.4vw, 1.75rem) * var(--lyric-scale,1)); padding-bottom:34vh; }
+  .concert__foot span:last-child{ display:none; }
+  /* …except while auto scroll runs: then it is the speed control */
+  .concert.is-auto .concert__foot #concertHint{ display:inline; }
+}
+#concertHint{ cursor:default; }
+.concert.is-auto #concertHint{
+  cursor:pointer; color:var(--lilac);
+  padding:10px 0; text-decoration:underline dotted; text-underline-offset:4px;
+}
+@media (min-width:900px){ .iconbtn--only-mobile{ display:none; } }
+
+/* Very narrow phones (320–360px): the six tool buttons and the exit
+   button leave the song title no room at all — it collapsed to zero
+   width and the last button ran past the right edge of the screen.
+   The tools move onto their own row so the title keeps a line of its
+   own and every button stays inside the viewport. */
+@media (max-width:360px){
+  .concert__bar{ flex-wrap:wrap; row-gap:9px; }
+  .concert__tools{ flex:0 0 100%; justify-content:flex-end; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}
+
+/* ── high-contrast bright mode for concert ─────────────────── */
+.concert.is-bright{ background:#fff8ef; color:#161224; }
+.concert.is-bright .concert__bar,
+.concert.is-bright .concert__foot,
+.concert.is-bright .concert__seek{
+  background:rgba(255,248,239,.96);
+  border-color:rgba(22,18,36,.14);
+  color:#161224;
+}
+.concert.is-bright .concert__sub,
+.concert.is-bright .concert__foot span,
+.concert.is-bright .concert__seeklabel{ color:#524a63; }
+.concert.is-bright .concert__scroll p{ color:rgba(22,18,36,.28); }
+.concert.is-bright .concert__scroll p.is-past{ color:rgba(22,18,36,.20); }
+.concert.is-bright .concert__scroll p.is-next{ color:rgba(22,18,36,.58); }
+.concert.is-bright .concert__scroll p.is-cur{
+  color:#161224;
+  text-shadow:0 0 24px rgba(139,63,240,.22);
+}
+.concert.is-bright .concert__scroll p.is-cur .w{ color:rgba(22,18,36,.45); }
+.concert.is-bright .concert__scroll p.is-cur .w.on{ color:#161224; }
+.concert.is-bright .cline__ko{ color:#4b1d8f; }
+/* the tool bar and the ‹ ▶ › row: light-on-light was unreadable in daylight */
+.concert.is-bright .iconbtn{ color:#161224; border-color:rgba(22,18,36,.32); }
+.concert.is-bright .iconbtn:hover{ background:rgba(22,18,36,.06); border-color:rgba(22,18,36,.5); }
+.concert.is-bright .iconbtn.is-on{ color:#fff8ef; background:#6a2fd0; border-color:#6a2fd0; }
+.concert.is-bright .concert__title{ color:#161224; }
+.concert.is-bright #concertPos{ color:#161224; }
+.concert.is-bright .lyric__en{ color:#3e374d; }
+
+/* ── fanchant cues ─────────────────────────────────────────── */
+.fanchant{
+  color:var(--lilac);
+  background:rgba(139,63,240,.18);
+  border:1px solid rgba(201,166,255,.32);
+  border-radius:3px;
+  padding:0 5px;
+  font-weight:600;
+}
+.concert.is-bright .fanchant{
+  color:#4b1d8f;
+  background:rgba(139,63,240,.14);
+  border-color:rgba(75,29,143,.3);
+}
